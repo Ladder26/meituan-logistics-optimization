@@ -1,7 +1,8 @@
 # 美团物流优化系统
 
 城市群零售网络物流与库存联合优化解决方案
-
+![Python](https://img.shields.io/badge/Python-3.B-blue)
+![License](https://img.shields.io/badge/License--green)
 ## 项目概述
 
 本项目解决某快消品巨头在主城 CDC 向周边 5 个卫星城（共 25 个零售站点）进行补货配送的优化问题。
