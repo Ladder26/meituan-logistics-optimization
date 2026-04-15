@@ -73,7 +73,7 @@ for i, city in enumerate(cities):
     ax_y = cy + anchor_radius * np.sin(angle)
     
     text_offsets = {
-        'A': (-8, 0),
+        'A': (-16, 0),
         'B': (8, 0),
         'C': (8, 0),
         'D': (-8, 0),
