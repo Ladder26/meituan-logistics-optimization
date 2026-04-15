@@ -17,7 +17,7 @@ COLOR_OPTIMAL = '#81B29A'
 COLOR_BASELINE = '#D3D3D3'
 
 # Load top 10 solutions
-with open('output/top_solutions_20260415_233051.json', 'r') as f:
+with open('output/top_solutions_20260415_234203.json', 'r') as f:
     top_solutions = json.load(f)
 
 top_costs = [sol['total_cost'] for sol in top_solutions[:10]]

@@ -62,6 +62,9 @@ with $h$ the unit holding cost. The transport cost contains two parts: the CDC-t
 \end{equation}
 where $\mathcal{G}$ is the set of station groups and $c(g)$ the routing cost for group $g$ under its assigned vehicle. City-level optimization simply enumerates $T=1,\dots,7$ and picks the minimizer $T^*$.
 
+\subsection{Vehicle Routing and Load-Rate Monitoring}
+For every station group, the model selects the cheapest feasible vehicle mix (small and/or large trucks) and constructs a detailed unloading sequence. Because vehicles are filled in station order, the model records the load rate both \emph{before} and \emph{after} each stop. This load-rate trace serves two purposes: (i) it verifies that capacity constraints are respected throughout the tour, and (ii) it highlights under-utilized trips. For example, City B's group $[B_4,B_5]$ is served by a large truck at only $42.5\%$ load, whereas City A's group $[A_3,A_4,A_5]$ reaches $95\%$. Such disparities motivate dynamic re-grouping or a switch to smaller vehicles when demand patterns shift.
+
 \subsection{Global Joint Optimization}
 Because there are only five cities and $T \in \{1,\dots,7\}$, the full decision space contains $7^5 = 16{,}807$ combinations. Global optimality is guaranteed by exhaustive enumeration: for each combination $(T_A,\dots,T_E)$, we sum the corresponding city-level optimal costs and select the combination with the minimum total cost.
 
@@ -145,6 +148,7 @@ We distill three actionable recommendations for operations managers:
     \item \textbf{Reject uniform policies.} Cities with high demand (A, B) must be replenished daily, whereas low-demand cities (E) can operate on much longer cycles. Adopting a differentiated $T$ policy is the single largest lever for cost reduction.
     \item \textbf{Watch the storage--transport inflection point.} For medium-demand cities such as D, the total-cost curve is U-shaped. Precise calibration of the inflection point ($T^*=3$ in this case) can yield savings of several hundred CNY per day.
     \item \textbf{Coordinate fleet planning with $T$.} Extending $T$ increases single-trip volume. Managers should simultaneously review whether larger vehicles or revised station groupings are needed to keep local routing efficient.
+    \item \textbf{Monitor vehicle load rates.} Low load rates signal idle capacity and inflated per-unit transport costs. For under-utilized groups (e.g., $42.5\%$ for $[B_4,B_5]$), managers should consider merging additional nearby stations or switching to smaller trucks to improve asset utilization.
 \end{enumerate}
 
 \section{Conclusion}
