@@ -72,16 +72,25 @@ for i, city in enumerate(cities):
     ax_x = cx + anchor_radius * np.cos(angle)
     ax_y = cy + anchor_radius * np.sin(angle)
     
+    text_offsets = {
+        'A': (-8, 0),
+        'B': (8, 0),
+        'C': (8, 0),
+        'D': (-8, 0),
+        'E': (0, 0),
+    }
+    tx, ty = text_offsets[city]
+    
     ax.annotate(f'{city}  T*={data["cities"][city]["optimal_T"]}', 
                 (ax_x, ax_y), textcoords="offset points",
-                xytext=(0, 0),
+                xytext=(tx, ty),
                 ha='center', va='center', fontsize=9, fontweight='bold',
                 color=text_color,
                 bbox=dict(boxstyle='round,pad=0.22', facecolor='white', edgecolor='none', alpha=0.95))
     
     ax.annotate(veh_label, 
                 (ax_x, ax_y), textcoords="offset points",
-                xytext=(0, -13),
+                xytext=(tx, ty - 13),
                 ha='center', va='top', fontsize=7, color='dimgray', style='italic')
     
     n_stations = data['cities'][city]['station_count']
