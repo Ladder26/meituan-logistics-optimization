@@ -168,8 +168,10 @@ python figures/combine_fig1_fig2.py
 
 ## 学术论文
 
-- **英文版**: [report/main.pdf](report/main.pdf)
-- **中文版**: [report/main_cn.pdf](report/main_cn.pdf)
+| 版本 | 文件 |
+| --- | --- |
+| 英文版 | [report/main.pdf](report/main.pdf) |
+| 中文版 | [report/main_cn.pdf](report/main_cn.pdf) |
 
 两版论文均包含数学模型、算法伪代码、敏感性分析及管理启示。
 
