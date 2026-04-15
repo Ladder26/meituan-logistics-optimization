@@ -42,8 +42,8 @@ for i, city in enumerate(cities):
     cy = cdc_y + d * np.sin(angle)
     
     ax.plot([cdc_x, cx], [cdc_y, cy], 'k-', linewidth=1.0, alpha=0.25, zorder=1)
-    ax.scatter(cx, cy, s=320, c=COLOR_CITIES[city], zorder=4,
-               edgecolors='white', linewidths=2)
+    ax.scatter(cx, cy, s=420, c=COLOR_CITIES[city], marker='*', zorder=4,
+               edgecolors='white', linewidths=1.2)
     
     text_color = '#2A2A2A' if city in DARK_TEXT_CITIES else 'black'
     n_small = data['cities'][city]['n_small']
@@ -92,7 +92,7 @@ ax.set_title('(a) Logistics Network Topology and Optimal Configurations',
 
 legend_elements = [
     Line2D([0], [0], marker='o', color='w', markerfacecolor='#2A2A2A', markersize=10, label='CDC'),
-    Line2D([0], [0], marker='o', color='w', markerfacecolor='gray', markersize=8, label='City Hub (optimal T*)'),
+    Line2D([0], [0], marker='*', color='w', markerfacecolor='gray', markersize=12, label='City Hub (optimal T*)'),
     Line2D([0], [0], marker='o', color='w', markerfacecolor='gray', markersize=5, label='Retail Station'),
 ]
 ax.legend(handles=legend_elements, loc='upper right', frameon=False, fontsize=9,
