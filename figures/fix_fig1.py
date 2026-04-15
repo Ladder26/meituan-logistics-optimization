@@ -95,7 +95,7 @@ for i, city in enumerate(cities):
         daily = get_daily_demand(city, j)
         peak_inventory = daily * (optimal_T + LEAD_TIME)
         area = peak_inventory / STORAGE_CONVERSION
-        point_size = area * 0.35 + 20
+        point_size = area * 0.7 + 5
         ax.scatter(sx, sy, s=point_size, c=COLOR_CITIES[city], alpha=0.9, zorder=3,
                    edgecolors='white', linewidths=0.8)
         ax.plot([cx, sx], [cy, sy], '-', color=COLOR_CITIES[city], linewidth=0.9, alpha=0.6, zorder=2)
