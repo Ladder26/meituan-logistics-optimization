@@ -35,7 +35,7 @@ for i, (s, t, T) in enumerate(zip(storage, transport, optimal_T)):
 ax.set_ylabel('Daily Cost (CNY)', fontsize=10)
 ax.set_xlabel('City', fontsize=10, labelpad=8)
 ax.set_xticks(x)
-ax.set_xticklabels([f'City {c}' for c in cities], fontsize=9)
+ax.set_xticklabels(cities, fontsize=9)
 
 # Distinguish tick labels from axis labels: make ticks gray and smaller
 ax.tick_params(axis='y', labelsize=8, colors='dimgray')

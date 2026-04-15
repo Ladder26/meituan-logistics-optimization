@@ -142,7 +142,7 @@ for i, (s, t, T) in enumerate(zip(storage, transport, optimal_T)):
 ax2.set_ylabel('Daily Cost (CNY)', fontsize=10)
 ax2.set_xlabel('City', fontsize=10, labelpad=8)
 ax2.set_xticks(x)
-ax2.set_xticklabels([f'City {c}' for c in cities], fontsize=9)
+ax2.set_xticklabels(cities, fontsize=9)
 ax2.tick_params(axis='y', labelsize=8, colors='dimgray')
 ax2.tick_params(axis='x', labelsize=9, colors='black')
 ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x):,}'))
