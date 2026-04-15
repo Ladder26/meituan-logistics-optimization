@@ -74,8 +74,8 @@ for i, city in enumerate(cities):
     
     text_offsets = {
         'A': (-56, -10),
-        'B': (8, 0),
-        'C': (8, 0),
+        'B': (18, 0),
+        'C': (23, 0),
         'D': (-8, 0),
         'E': (0, 0),
     }
