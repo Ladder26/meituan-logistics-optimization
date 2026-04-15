@@ -87,7 +87,7 @@ python test_cost_models.py
 ```bash
 python figures/fix_fig1.py
 python figures/fix_fig2.py
-python figures/fix_fig3_all_cities.py
+python figures/fix_fig3.py
 python figures/fix_fig4.py
 python figures/combine_fig1_fig2.py
 ```
@@ -162,7 +162,7 @@ python figures/combine_fig1_fig2.py
 | --- | --- | --- |
 | Fig 1 | 物流网络拓扑与最优配置 | `figures/fix_fig1.py` |
 | Fig 2 | 各城市最优日成本分解 | `figures/fix_fig2.py` |
-| Fig 3 | 五城市 T 敏感性分析 (2×3) | `figures/fix_fig3_all_cities.py` |
+| Fig 3 | 五城市 T 敏感性分析 (2×3) | `figures/fix_fig3.py` |
 | Fig 4 | 全局 Top-10 与 uniform-T 对比 | `figures/fix_fig4.py` |
 | Fig 1+2 | 组合图（用于论文双栏排版） | `figures/combine_fig1_fig2.py` |
 
