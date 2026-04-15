@@ -64,54 +64,69 @@ def run_global_optimization(top_k: int = 10, verbose: bool = True):
 def generate_detailed_report(global_result: dict, output_dir: Path):
     """生成详细报告文件"""
     output_dir.mkdir(parents=True, exist_ok=True)
-    
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
+
     # 1. 保存全局最优方案 (JSON)
     optimal_file = output_dir / f"optimal_solution_{timestamp}.json"
     with open(optimal_file, 'w', encoding='utf-8') as f:
         json.dump(global_result['optimal_solution'], f, ensure_ascii=False, indent=2)
-    
+
     # 2. 保存所有Top方案 (JSON)
     top_file = output_dir / f"top_solutions_{timestamp}.json"
     with open(top_file, 'w', encoding='utf-8') as f:
         json.dump(global_result['top_solutions'], f, ensure_ascii=False, indent=2)
-    
+
     # 3. 生成文本报告
     report_file = output_dir / f"optimization_report_{timestamp}.txt"
     with open(report_file, 'w', encoding='utf-8') as f:
-        f.write("="*70 + "\n")
+        f.write("=" * 70 + "\n")
         f.write("美团物流优化系统 - 优化报告\n")
         f.write(f"生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write("="*70 + "\n\n")
-        
+        f.write("=" * 70 + "\n\n")
+
         # 最优方案
         optimal = global_result['optimal_solution']
         f.write("【全局最优方案】\n\n")
         f.write(f"系统日总成本最小值: {optimal['total_cost']:,.2f} 元\n")
         f.write(f"  - 总仓储成本: {optimal['total_storage_cost']:,.2f} 元\n")
         f.write(f"  - 总运输成本: {optimal['total_transport_cost']:,.2f} 元\n\n")
-        
+
         f.write("各城市配置:\n")
         for city, T in optimal['T_combo'].items():
             city_result = next(r for r in optimal['city_results'] if r['city_code'] == city)
+            route_plan = city_result['route_plan']  # ← 在这里定义 route_plan
+
             f.write(f"  City {city}: T={T}天\n")
             f.write(f"    仓储成本: {city_result['storage_cost']:,.2f} 元/天\n")
             f.write(f"    运输成本: {city_result['transport_cost']:,.2f} 元/天\n")
             f.write(f"    日总成本: {city_result['total_cost']:,.2f} 元/天\n")
-            
-            # 车辆调度详情
-            route_plan = city_result['route_plan']
+
+            # 车辆调度详情 - 必须在循环内部
             f.write(f"    车辆调度:\n")
             for i, vp in enumerate(route_plan['vehicle_plans'], 1):
                 group = vp['group']
                 plan = vp['plan']
-                stations_str = ', '.join([f"{city}_{s+1}" for s in group])
+                stations_str = ', '.join([f"{city}_{s + 1}" for s in group])
                 f.write(f"      车组{i}: 站点[{stations_str}]\n")
                 f.write(f"        车辆: 小车×{plan['n_small']} + 大车×{plan['n_large']}\n")
+                f.write(f"        总需求: {plan['total_demand']:,} pcs\n")
+                f.write(f"        配送里程: {plan['distance']} km\n")
+
+                for v in plan['vehicles']:
+                    if 'vehicle_id' in v:
+                        f.write(
+                            f"        ├─ {v['vehicle_id']} ({v['type']}): 装载{v['total_load']:,} pcs ({v['load_rate']:.1f}%)\n")
+                        for stop in v['route_stops']:
+                            f.write(
+                                f"        │    └─ {stop['station_name']}: 卸{stop['unload_amount']:,} pcs, 装载率 {stop['load_rate_before']:.1f}%→{stop['load_rate_after']:.1f}%\n")
+                    else:
+                        # 兼容旧版 JSON
+                        f.write(f"        ├─ {v['type']}: 装载{v.get('load', 0):,} pcs\n")
+
                 f.write(f"        单次配送成本: {plan['total_trip_cost']:,.2f} 元\n")
             f.write("\n")
-        
+
         # Top方案对比
         f.write("\n【Top 10 方案对比】\n\n")
         f.write(f"{'排名':<6} {'A':<4} {'B':<4} {'C':<4} {'D':<4} {'E':<4} {'总成本':<15}\n")
@@ -120,28 +135,29 @@ def generate_detailed_report(global_result: dict, output_dir: Path):
             T = sol['T_combo']
             marker = " ← 最优" if i == 1 else ""
             f.write(f"{i:<6} {T['A']:<4} {T['B']:<4} {T['C']:<4} {T['D']:<4} {T['E']:<4} "
-                   f"{sol['total_cost']:<15,.2f}{marker}\n")
-    
+                    f"{sol['total_cost']:<15,.2f}{marker}\n")
+
     return {
         'optimal_json': optimal_file,
         'top_json': top_file,
         'report': report_file
     }
 
-
 def print_final_summary(global_result: dict):
-    """打印最终摘要"""
+    """打印最终摘要（包含详细车辆调度）"""
     optimal = global_result['optimal_solution']
-    
-    print("\n" + "="*70)
+
+    print("\n" + "=" * 70)
     print("🎉 美团物流优化系统 - 最终优化结果")
-    print("="*70)
-    
+    print("=" * 70)
+
     print(f"\n💰 系统日总成本最小值: {optimal['total_cost']:,.2f} 元")
     print(f"\n📊 成本构成:")
-    print(f"   总仓储成本: {optimal['total_storage_cost']:,.2f} 元 ({optimal['total_storage_cost']/optimal['total_cost']*100:.1f}%)")
-    print(f"   总运输成本: {optimal['total_transport_cost']:,.2f} 元 ({optimal['total_transport_cost']/optimal['total_cost']*100:.1f}%)")
-    
+    print(
+        f"   总仓储成本: {optimal['total_storage_cost']:,.2f} 元 ({optimal['total_storage_cost'] / optimal['total_cost'] * 100:.1f}%)")
+    print(
+        f"   总运输成本: {optimal['total_transport_cost']:,.2f} 元 ({optimal['total_transport_cost'] / optimal['total_cost'] * 100:.1f}%)")
+
     print(f"\n📋 各城市最优配置:")
     print(f"{'城市':<6} {'订货周期T':<12} {'日总成本':<15} {'车辆数':<8}")
     print("-" * 50)
@@ -149,10 +165,59 @@ def print_final_summary(global_result: dict):
         city_result = next(r for r in optimal['city_results'] if r['city_code'] == city)
         n_vehicles = city_result['route_plan']['n_vehicles']
         print(f"City {city:<3} {T:<12} {city_result['total_cost']:<15,.1f} {n_vehicles}")
-    
-    print("\n" + "="*70)
+
+    # ========== 新增：详细车辆调度信息 ==========
+    print(f"\n🚚 详细车辆调度方案:")
+    print("=" * 70)
+
+    for city, T in optimal['T_combo'].items():
+        city_result = next(r for r in optimal['city_results'] if r['city_code'] == city)
+        route_plan = city_result['route_plan']
+
+        print(f"\n📍 City {city} (T={T}天, 每{T}天配送一次)")
+        print(f"   日均运输成本: {city_result['transport_cost']:,.1f} 元")
+        print(f"   单次配送总成本: {route_plan['single_trip_cost']:,.1f} 元")
+        print(
+            f"   使用车辆: 小车×{sum(p['plan']['n_small'] for p in route_plan['vehicle_plans'])} + 大车×{sum(p['plan']['n_large'] for p in route_plan['vehicle_plans'])}")
+        print()
+
+        for group_idx, vp in enumerate(route_plan['vehicle_plans'], 1):
+            group = vp['group']
+            plan = vp['plan']
+            stations_str = ', '.join([f"{city}_{s + 1}" for s in group])
+
+            print(f"   车组{group_idx}: 站点 [{stations_str}]")
+            print(f"      总需求: {plan['total_demand']:,} pcs")
+            print(f"      配送里程: {plan['distance']} km (CDC→{city} {plan['distance'] / 2:.0f}km + 返回)")
+            print(f"      车辆配置: 小车×{plan['n_small']} + 大车×{plan['n_large']}")
+
+            # 打印每辆车的详细路径
+            for vehicle in plan['vehicles']:
+                if 'vehicle_id' in vehicle:
+                    print(f"\n      🚛 {vehicle['vehicle_id']} ({vehicle['type']})")
+                    print(
+                        f"         载货量: {vehicle['total_load']:,} / {vehicle['capacity']:,} pcs ({vehicle['load_rate']:.1f}%)")
+                    print(f"         访问站点数: {vehicle['n_stops']}")
+                    print(f"         路径详情:")
+
+                    for stop_idx, stop in enumerate(vehicle['route_stops'], 1):
+                        print(f"           {stop_idx}. {stop['station_name']}")
+                        print(f"              卸货: {stop['unload_amount']:,} pcs")
+                        print(
+                            f"              卸货前装载: {stop['load_before_unload']:,} pcs ({stop['load_rate_before']:.1f}%)")
+                        print(
+                            f"              卸货后装载: {stop['load_after_unload']:,} pcs ({stop['load_rate_after']:.1f}%)")
+                else:
+                    # 兼容旧版 JSON
+                    print(f"\n      🚛 {vehicle['type']}")
+                    print(f"         载货量: {vehicle.get('load', 0):,} pcs")
+
+            print(f"      单次配送成本: {plan['total_trip_cost']:,.1f} 元")
+            print()
+
+    print("=" * 70)
     print("✅ 优化完成！详细报告已保存到 output/ 目录")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
 
 def main():

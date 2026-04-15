@@ -59,105 +59,176 @@ def generate_all_groupings(n_stations: int, max_group_size: int = 3):
 def calculate_vehicle_plan(city_code: str, station_indices: list, T: int) -> dict:
     """
     为一组站点计算最优车辆配置方案（支持多车配送）
-    
-    参数:
-        city_code: 城市代码
-        station_indices: 站点索引列表（最多3个）
-        T: 订货周期
-    
-    返回:
-        {
-            'vehicles': [{'type': 'small'/'large', 'capacity': 80000/200000, 'load': 实际载货量}, ...],
-            'n_small': 小车数量,
-            'n_large': 大车数量,
-            'total_trip_cost': 单次配送总成本（所有车）,
-            'total_capacity': 总运力,
-            'total_demand': 总需求,
-            'feasible': 是否可行
-        }
+
+    返回中增加每辆车的站点访问顺序和装载变化
     """
     # 计算总需求
     total_demand = sum(get_daily_demand(city_code, i) * T for i in station_indices)
-    
+
     # 获取车辆参数
     small = get_vehicle_type('small')
     large = get_vehicle_type('large')
-    
+
     city_params = get_city_parameters(city_code)
     k = len(station_indices)
-    
+
     # 计算该分组的里程
-    distance = calculate_group_distance(city_params['cdc_distance'], 
-                                       city_params['inter_station_distance'], k)
-    
+    distance = calculate_group_distance(city_params['cdc_distance'],
+                                        city_params['inter_station_distance'], k)
+
+    # 计算各站点的单次配送需求量（按T天计算）
+    station_demands = []
+    for i in station_indices:
+        daily = get_daily_demand(city_code, i)
+        station_demands.append({
+            'station_index': i,
+            'station_name': f"{city_code}_{i + 1}",
+            'daily_demand': daily,
+            'order_quantity': daily * T  # 单次配送量
+        })
+
+    # 按站点索引排序（确定访问顺序）
+    station_demands.sort(key=lambda x: x['station_index'])
+
     # 尝试所有可能的车辆组合，找成本最低的
-    # 最多需要 ceil(total_demand / 80000) 辆车
     max_vehicles = (total_demand + small['capacity'] - 1) // small['capacity']
-    max_vehicles = min(max_vehicles, 10)  # 限制上限避免极端情况
-    
+    max_vehicles = min(max_vehicles, 10)
+
     best_plan = None
     best_cost = float('inf')
-    
+
     # 枚举小车数量，其余用大车
     for n_small in range(max_vehicles + 1):
         n_large = 0
         capacity = n_small * small['capacity']
-        
-        # 计算还需要多少大车
+
         remaining = total_demand - capacity
         if remaining > 0:
             n_large = (remaining + large['capacity'] - 1) // large['capacity']
             capacity += n_large * large['capacity']
-        
-        # 检查运力是否足够
+
         if capacity < total_demand:
             continue
-        
+
         # 计算该配置的成本
-        # 每辆车的成本 = 固定成本 + 变动成本 × 距离
-        # 注意：多车配送时，每辆车都走完整路线
         small_cost = small['fixed_cost'] + small['variable_cost'] * distance
         large_cost = large['fixed_cost'] + large['variable_cost'] * distance
-        
+
         total_cost = n_small * small_cost + n_large * large_cost
-        
+
         if total_cost < best_cost:
             best_cost = total_cost
-            vehicles = []
-            
+
+            # 构建详细的车辆分配方案（包含装载变化）
+            vehicles_detail = []
+            remaining_demands = [s['order_quantity'] for s in station_demands]
+
             # 分配小车
-            small_load = min(total_demand, small['capacity'])
-            for i in range(n_small):
-                load = min(small_load, small['capacity'])
-                vehicles.append({
+            for v_idx in range(n_small):
+                vehicle_load_detail = []
+                current_load = 0
+
+                # 按顺序装货（确定每站装多少）
+                for s_idx, s in enumerate(station_demands):
+                    if remaining_demands[s_idx] > 0:
+                        # 能装多少装多少
+                        can_load = min(remaining_demands[s_idx], small['capacity'] - current_load)
+                        if can_load > 0:
+                            vehicle_load_detail.append({
+                                'station_name': s['station_name'],
+                                'station_index': s['station_index'],
+                                'load_amount': can_load,
+                                'load_after_stop': current_load + can_load  # 装货后装载量
+                            })
+                            current_load += can_load
+                            remaining_demands[s_idx] -= can_load
+
+                        if current_load >= small['capacity']:
+                            break
+
+                # 计算到达每个站点时的装载率（卸货前/装货后）
+                route_stops = []
+                remaining_load = current_load
+                for stop in vehicle_load_detail:
+                    route_stops.append({
+                        'station_name': stop['station_name'],
+                        'action': '卸货',
+                        'unload_amount': stop['load_amount'],
+                        'load_before_unload': remaining_load,  # 卸货前装载量
+                        'load_after_unload': remaining_load - stop['load_amount'],  # 卸货后装载量
+                        'load_rate_before': remaining_load / small['capacity'] * 100,
+                        'load_rate_after': (remaining_load - stop['load_amount']) / small['capacity'] * 100
+                    })
+                    remaining_load -= stop['load_amount']
+
+                vehicles_detail.append({
+                    'vehicle_id': f"S-{v_idx + 1}",
                     'type': 'small',
                     'capacity': small['capacity'],
-                    'load': load if i == 0 else small['capacity']  # 简化：假设均匀分配
+                    'total_load': current_load,
+                    'load_rate': current_load / small['capacity'] * 100,
+                    'route_stops': route_stops,
+                    'n_stops': len(route_stops)
                 })
-                small_load -= load
-            
+
             # 分配大车
-            remaining_for_large = total_demand - sum(v['load'] for v in vehicles if v['type'] == 'small')
-            for i in range(n_large):
-                load = min(remaining_for_large, large['capacity'])
-                vehicles.append({
+            for v_idx in range(n_large):
+                vehicle_load_detail = []
+                current_load = 0
+
+                for s_idx, s in enumerate(station_demands):
+                    if remaining_demands[s_idx] > 0:
+                        can_load = min(remaining_demands[s_idx], large['capacity'] - current_load)
+                        if can_load > 0:
+                            vehicle_load_detail.append({
+                                'station_name': s['station_name'],
+                                'station_index': s['station_index'],
+                                'load_amount': can_load,
+                                'load_after_stop': current_load + can_load
+                            })
+                            current_load += can_load
+                            remaining_demands[s_idx] -= can_load
+
+                        if current_load >= large['capacity']:
+                            break
+
+                # 计算到达每个站点时的装载率
+                route_stops = []
+                remaining_load = current_load
+                for stop in vehicle_load_detail:
+                    route_stops.append({
+                        'station_name': stop['station_name'],
+                        'action': '卸货',
+                        'unload_amount': stop['load_amount'],
+                        'load_before_unload': remaining_load,
+                        'load_after_unload': remaining_load - stop['load_amount'],
+                        'load_rate_before': remaining_load / large['capacity'] * 100,
+                        'load_rate_after': (remaining_load - stop['load_amount']) / large['capacity'] * 100
+                    })
+                    remaining_load -= stop['load_amount']
+
+                vehicles_detail.append({
+                    'vehicle_id': f"L-{v_idx + 1}",
                     'type': 'large',
                     'capacity': large['capacity'],
-                    'load': load if i == 0 else large['capacity']
+                    'total_load': current_load,
+                    'load_rate': current_load / large['capacity'] * 100,
+                    'route_stops': route_stops,
+                    'n_stops': len(route_stops)
                 })
-                remaining_for_large -= load
-            
+
             best_plan = {
-                'vehicles': vehicles,
+                'vehicles': vehicles_detail,
                 'n_small': n_small,
                 'n_large': n_large,
                 'total_trip_cost': total_cost,
                 'total_capacity': capacity,
                 'total_demand': total_demand,
                 'distance': distance,
+                'station_demands': station_demands,  # 各站点需求明细
                 'feasible': True
             }
-    
+
     if best_plan is None:
         return {
             'vehicles': [],
@@ -168,7 +239,7 @@ def calculate_vehicle_plan(city_code: str, station_indices: list, T: int) -> dic
             'total_demand': total_demand,
             'feasible': False
         }
-    
+
     return best_plan
 
 

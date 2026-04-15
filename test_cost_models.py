@@ -11,6 +11,7 @@ from models import (
     calculate_daily_total_cost,
     print_cost_breakdown,
 )
+from optimization.route_optimizer import optimize_city_routes
 
 
 def test_storage_cost():
@@ -90,25 +91,28 @@ def test_full_scenario():
     city = 'A'
     T = 3
     
-    # 合理分组方案：考虑载重约束
-    # A_1: 85000, A_2: 80000 → 合计 165000 < 200000 (大车)，可以用大车
-    # A_3: 75000, A_4: 60000 → 合计 135000 < 200000，可以用大车
-    # A_5: 55000, A_6: 50000 → 合计 105000 > 80000 (小车)，需要用大车
-    grouping_plan = [
-        [0, 1],     # 第一辆车服务 A_1, A_2 (165000 pcs)
-        [2, 3],     # 第二辆车服务 A_3, A_4 (135000 pcs)
-        [4, 5],     # 第三辆车服务 A_5, A_6 (105000 pcs)
-    ]
+    # 使用路由优化器获取真实最优分组方案（支持多车拆分）
+    route_result = optimize_city_routes(city, T)
+    grouping_plan = route_result['grouping_plan']
     
-    # 打印成本明细
-    try:
-        print_cost_breakdown(city, T, grouping_plan)
-        
-        # 计算总成本
-        total_cost = calculate_daily_total_cost(city, T, grouping_plan)
-        print(f"\n日总成本：{total_cost:,.1f} 元/天")
-    except ValueError as e:
-        print(f"\n⚠️ 错误：{e}")
+    print(f"\n【真实最优分组方案 (T={T})】")
+    print(f"  可行性: {route_result['feasible']}")
+    print(f"  日均运输成本: {route_result['daily_transport_cost']:,.1f} 元")
+    for i, vp in enumerate(route_result['vehicle_plans'], 1):
+        group = vp['group']
+        plan = vp['plan']
+        stations = [f"{city}_{s+1}" for s in group]
+        print(f"  车组{i}: 站点{stations} → 车型:{plan['n_small']}小+{plan['n_large']}大 → 单次成本:{plan['total_trip_cost']:,.1f}元")
+    
+    # 直接使用路由优化器返回的日均运输成本计算总成本
+    # （旧版 cost_models 的 calculate_daily_total_cost 不支持多车拆分）
+    storage = calculate_city_total_storage_cost(city, T)
+    transport_daily = route_result['daily_transport_cost']
+    total_cost = storage + transport_daily
+    
+    print(f"\n【日总成本】")
+    print(f"  日总成本 = 仓储 {storage:,.1f} + 运输 {transport_daily:,.1f} = {total_cost:,.1f} 元/天")
+    print(f"{'='*60}\n")
 
 
 def compare_T_scenarios():
@@ -118,8 +122,6 @@ def compare_T_scenarios():
     print("=" * 60)
     
     city = 'A'
-    # 使用合理的分组方案
-    grouping_plan = [[0, 1], [2, 3], [4, 5]]
     
     print(f"\n{'订货周期 T':<12} {'仓储成本':<15} {'运输成本':<15} {'总成本':<15}")
     print("-" * 60)
@@ -127,16 +129,13 @@ def compare_T_scenarios():
     for T in range(1, 8):
         storage = calculate_city_total_storage_cost(city, T)
         
-        # 重新计算运输成本（考虑车型选择）
-        transport = 0
-        for group in grouping_plan:
-            vehicle = select_optimal_vehicle(city, group)
-            if vehicle:
-                transport += calculate_single_trip_cost(city, len(group), vehicle)
+        # 使用路由优化器获取真实最优分组和运输成本
+        route_result = optimize_city_routes(city, T)
+        transport = route_result['daily_transport_cost'] * T  # 单次总运费
         
-        total = storage + transport
+        total = storage + route_result['daily_transport_cost']
         
-        print(f"{T:<12} {storage:>10,.1f}      {transport:>10,.1f}      {total:>10,.1f}")
+        print(f"{T:<12} {storage:>10,.1f}      {route_result['daily_transport_cost']:>10,.1f}      {total:>10,.1f}")
 
 
 if __name__ == "__main__":
