@@ -1,10 +1,15 @@
 """Figure 1: A shifted slightly counter-clockwise, A/B labels raised."""
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__) + '/..'))
+
 import json
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.lines import Line2D
 import numpy as np
+from config.parameters import get_daily_demand, LEAD_TIME, STORAGE_CONVERSION
 
 def darken_color(hex_color: str, factor: float = 0.65):
     """将 HEX 颜色加深。"""
@@ -83,10 +88,15 @@ for i, city in enumerate(cities):
     station_radius = 0.9
     station_angles = np.linspace(0, 2*np.pi, n_stations, endpoint=False)
     
+    optimal_T = data['cities'][city]['optimal_T']
     for j, sa in enumerate(station_angles):
         sx = cx + station_radius * np.cos(sa)
         sy = cy + station_radius * np.sin(sa)
-        ax.scatter(sx, sy, s=55, c=COLOR_CITIES[city], alpha=0.9, zorder=3,
+        daily = get_daily_demand(city, j)
+        peak_inventory = daily * (optimal_T + LEAD_TIME)
+        area = peak_inventory / STORAGE_CONVERSION
+        point_size = area * 0.35 + 20
+        ax.scatter(sx, sy, s=point_size, c=COLOR_CITIES[city], alpha=0.9, zorder=3,
                    edgecolors='white', linewidths=0.8)
         ax.plot([cx, sx], [cy, sy], '-', color=COLOR_CITIES[city], linewidth=0.9, alpha=0.6, zorder=2)
 
@@ -100,7 +110,7 @@ ax.set_title('(a) Logistics Network Topology and Optimal Configurations',
 legend_elements = [
     Line2D([0], [0], marker='o', color='w', markerfacecolor='#2A2A2A', markersize=10, label='CDC'),
     Line2D([0], [0], marker='*', color='w', markerfacecolor='dimgray', markersize=12, label='City Hub (optimal T*)'),
-    Line2D([0], [0], marker='o', color='w', markerfacecolor='gray', markersize=5, label='Retail Station'),
+    Line2D([0], [0], marker='o', color='w', markerfacecolor='gray', markersize=5, label='Retail Station (size ∝ inventory)'),
 ]
 ax.legend(handles=legend_elements, loc='upper right', frameon=False, fontsize=9,
           bbox_to_anchor=(1.0, 1.0))
