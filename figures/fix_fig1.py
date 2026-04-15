@@ -125,7 +125,7 @@ ax.legend(handles=legend_elements, loc='upper right', frameon=False, fontsize=9,
           bbox_to_anchor=(1.0, 1.0))
 
 plt.tight_layout()
-plt.savefig('figures/fig1_topology.pdf', bbox_inches='tight', pad_inches=0.05)
-plt.savefig('figures/fig1_topology.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig1.pdf', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig1.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 plt.close()
 print('Fig 1 fixed and saved.')

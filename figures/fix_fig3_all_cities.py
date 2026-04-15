@@ -102,7 +102,7 @@ fig.legend(handles, labels, loc='lower center', ncol=3, frameon=False,
            handletextpad=1.0)
 
 plt.tight_layout(rect=[0, 0.06, 1, 0.97])
-plt.savefig('figures/fig3_t_sensitivity.pdf', bbox_inches='tight', pad_inches=0.05)
-plt.savefig('figures/fig3_t_sensitivity.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig3_all_cities.pdf', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig3_all_cities.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 plt.close()
 print('Fig 3 (all cities) saved.')

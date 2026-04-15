@@ -63,7 +63,7 @@ ax.legend(loc='upper right', frameon=False, fontsize=9,
 ax.set_ylim(0, 11000)
 
 plt.tight_layout()
-plt.savefig('figures/fig2_cost_breakdown.pdf', bbox_inches='tight', pad_inches=0.05)
-plt.savefig('figures/fig2_cost_breakdown.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig2.pdf', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig2.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 plt.close()
 print('Fig 2 fixed and saved.')

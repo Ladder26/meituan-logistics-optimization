@@ -94,7 +94,7 @@ ax2.text(0.02, 1.02, '(e) Comparison with Uniform-T Strategies',
 ax2.set_ylim(0, 46000)
 
 plt.tight_layout()
-plt.savefig('figures/fig4_global_effect.pdf', bbox_inches='tight', pad_inches=0.05)
-plt.savefig('figures/fig4_global_effect.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig4.pdf', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/fix_fig4.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 plt.close()
 print('Fig 4 fixed and saved.')

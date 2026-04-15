@@ -160,7 +160,7 @@ ax2.legend(loc='upper right', frameon=False, fontsize=9,
 ax2.set_ylim(0, 11000)
 
 plt.tight_layout()
-plt.savefig('figures/fig1_fig2_combined.pdf', bbox_inches='tight', pad_inches=0.05)
-plt.savefig('figures/fig1_fig2_combined.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/combine_fig1_fig2.pdf', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('figures/combine_fig1_fig2.png', dpi=300, bbox_inches='tight', pad_inches=0.05)
 plt.close()
 print('Combined Fig 1+2 saved.')
