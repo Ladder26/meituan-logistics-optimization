@@ -46,7 +46,14 @@ for i, city in enumerate(cities):
                edgecolors='white', linewidths=2)
     
     text_color = '#2A2A2A' if city in DARK_TEXT_CITIES else 'black'
-    n_veh = data['cities'][city]['n_vehicles']
+    n_small = data['cities'][city]['n_small']
+    n_large = data['cities'][city]['n_large']
+    parts = []
+    if n_small > 0:
+        parts.append(f"{n_small}S")
+    if n_large > 0:
+        parts.append(f"{n_large}L")
+    veh_label = "+".join(parts)
     
     # Raise A/B labels a bit higher than others
     anchor_radius = 1.8 if city in ('A', 'B') else 1.4
@@ -60,7 +67,7 @@ for i, city in enumerate(cities):
                 color=text_color,
                 bbox=dict(boxstyle='round,pad=0.22', facecolor='white', edgecolor='none', alpha=0.95))
     
-    ax.annotate(f'{n_veh} trucks', 
+    ax.annotate(veh_label, 
                 (ax_x, ax_y), textcoords="offset points",
                 xytext=(0, -13),
                 ha='center', va='top', fontsize=7, color='dimgray', style='italic')

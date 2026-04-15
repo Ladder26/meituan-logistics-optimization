@@ -6,7 +6,9 @@
       "transport_cost": 3055.0,
       "total_cost": 9130.0,
       "station_count": 3,
-      "n_vehicles": 3
+      "n_vehicles": 3,
+      "n_small": 1,
+      "n_large": 2
     },
     "B": {
       "optimal_T": 1,
@@ -14,7 +16,9 @@
       "transport_cost": 3215.0,
       "total_cost": 6215.0,
       "station_count": 2,
-      "n_vehicles": 2
+      "n_vehicles": 2,
+      "n_small": 0,
+      "n_large": 2
     },
     "C": {
       "optimal_T": 2,
@@ -22,7 +26,9 @@
       "transport_cost": 2515.0,
       "total_cost": 4915.0,
       "station_count": 3,
-      "n_vehicles": 3
+      "n_vehicles": 3,
+      "n_small": 1,
+      "n_large": 2
     },
     "D": {
       "optimal_T": 3,
@@ -30,7 +36,9 @@
       "transport_cost": 1678.3333333333333,
       "total_cost": 2928.333333333333,
       "station_count": 2,
-      "n_vehicles": 2
+      "n_vehicles": 2,
+      "n_small": 0,
+      "n_large": 2
     },
     "E": {
       "optimal_T": 6,
@@ -38,7 +46,9 @@
       "transport_cost": 1001.6666666666666,
       "total_cost": 1685.6666666666665,
       "station_count": 2,
-      "n_vehicles": 2
+      "n_vehicles": 2,
+      "n_small": 0,
+      "n_large": 2
     }
   },
   "global_optimal": {
