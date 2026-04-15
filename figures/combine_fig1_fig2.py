@@ -65,9 +65,9 @@ for i, city in enumerate(cities):
     n_large = data['cities'][city]['n_large']
     parts = []
     if n_small > 0:
-        parts.append(f"{n_small}S")
+        parts.append(f"{n_small}Type-S")
     if n_large > 0:
-        parts.append(f"{n_large}L")
+        parts.append(f"{n_large}Type-L")
     veh_label = "+".join(parts)
     anchor_radius = 1.8 if city in ('A', 'B') else 1.4
     ax_x = cx + anchor_radius * np.cos(angle)

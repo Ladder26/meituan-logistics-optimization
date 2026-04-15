@@ -62,9 +62,9 @@ for i, city in enumerate(cities):
     n_large = data['cities'][city]['n_large']
     parts = []
     if n_small > 0:
-        parts.append(f"{n_small}S")
+        parts.append(f"{n_small}Type-S")
     if n_large > 0:
-        parts.append(f"{n_large}L")
+        parts.append(f"{n_large}Type-L")
     veh_label = "+".join(parts)
     
     # Raise A/B labels a bit higher than others
