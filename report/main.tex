@@ -33,7 +33,7 @@ The ``last-mile'' fresh-food delivery network faces a fundamental trade-off betw
 \end{abstract}
 
 \section{Introduction}
-Fresh e-commerce platforms such as Meituan face the daily challenge of replenishing perishable goods from a central distribution center (CDC) to multiple city hubs and then to retail stations. A longer replenishment cycle $T$ reduces the frequency of long-haul transportation but inflates average inventory levels and holding costs; conversely, a shorter $T$ cuts storage expenses at the expense of higher transport spending. Existing practice often treats inventory and routing decisions separately, or imposes a uniform $T$ across all cities, which frequently leads to sub-optimal outcomes.
+Fresh e-commerce platforms such as Meituan face the daily challenge of replenishing perishable goods from a central distribution center (CDC) to multiple cities and then to retail stations. A longer replenishment cycle $T$ reduces the frequency of long-haul transportation but inflates average inventory levels and holding costs; conversely, a shorter $T$ cuts storage expenses at the expense of higher transport spending. Existing practice often treats inventory and routing decisions separately, or imposes a uniform $T$ across all cities, which frequently leads to sub-optimal outcomes.
 
 This paper addresses the following two questions for a real-world Meituan network:
 \begin{enumerate}
@@ -42,7 +42,7 @@ This paper addresses the following two questions for a real-world Meituan networ
 \end{enumerate}
 
 \section{Problem Statement}
-The network consists of one CDC and five city hubs (A--E). Each hub serves a set of retail stations with known daily demand and distances to the CDC. Two vehicle types are available: large trucks (capacity 200,000 boxes) and small trucks (capacity 80,000 boxes). The planning objective is to minimize the \emph{average daily total cost}, which comprises (i) inventory holding cost at the city hub and (ii) daily transportation cost, including both CDC-to-city long-haul and city-to-station local delivery.
+The network consists of one CDC and five cities (A--E). Each city serves a set of retail stations with known daily demand and distances to the CDC. Two vehicle types are available: large trucks (capacity 200,000 boxes) and small trucks (capacity 80,000 boxes). The planning objective is to minimize the \emph{average daily total cost}, which comprises (i) inventory holding cost at the city and (ii) daily transportation cost, including both CDC-to-city long-haul and city-to-station local delivery.
 
 The decision variables are the integer replenishment cycles $T_i \in \{1,\dots,7\}$ for each city $i \in \{A,\dots,E\}$, together with the vehicle routing plans that satisfy capacity constraints in each replenishment trip.
 
@@ -88,7 +88,7 @@ Because there are only five cities and $T \in \{1,\dots,7\}$, the full decision 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{figures/fig1_fig2_combined.png}
-    \caption{(a) Logistics network topology: one CDC serves five city hubs (A--E). Each hub is annotated with its optimal replenishment cycle $T^*$ and the required fleet size. (b) Optimal daily cost breakdown by city, split into storage cost (orange) and transport cost (navy).}
+    \caption{(a) Logistics network topology: one CDC serves five cities (A--E). Each city is annotated with its optimal replenishment cycle $T^*$ and the required fleet size. (b) Optimal daily cost breakdown by city, split into storage cost (orange) and transport cost (navy).}
     \label{fig:topology}
 \end{figure}
 

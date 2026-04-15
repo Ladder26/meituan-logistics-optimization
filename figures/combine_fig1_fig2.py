@@ -109,7 +109,7 @@ ax1.text(0.02, 1.02, '(a) Logistics Network Topology and Optimal Configurations'
 
 legend_elements = [
     Line2D([0], [0], marker='o', color='w', markerfacecolor='#2A2A2A', markersize=10, label='CDC'),
-    Line2D([0], [0], marker='*', color='w', markerfacecolor='dimgray', markersize=12, label='City Hub (optimal T*)'),
+    Line2D([0], [0], marker='*', color='w', markerfacecolor='dimgray', markersize=12, label='City (optimal T*)'),
     Line2D([0], [0], marker='o', color='w', markerfacecolor='gray', markersize=5, label='Retail Station (size ∝ inventory)'),
 ]
 ax1.legend(handles=legend_elements, loc='upper right', frameon=False, fontsize=9,
