@@ -16,12 +16,13 @@ plt.rcParams['font.size'] = 9
 COLOR_OPTIMAL = '#81B29A'
 COLOR_BASELINE = '#D3D3D3'
 
-# Load top 10 solutions
-with open('output/top_solutions_20260415_234203.json', 'r') as f:
-    top_solutions = json.load(f)
+# Load top 10 solutions and optimal cost from central data
+with open('figures/data.json', 'r') as f:
+    data = json.load(f)
 
+top_solutions = data['top_solutions']
 top_costs = [sol['total_cost'] for sol in top_solutions[:10]]
-optimal_cost = top_costs[0]
+optimal_cost = data['global_optimal']['total_cost']
 
 # Compute uniform-T baselines
 uniform_costs = {}

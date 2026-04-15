@@ -17,6 +17,11 @@ COLOR_TRANSPORT = '#3D405B'
 COLOR_TOTAL = '#81B29A'
 
 cities = ['A', 'B', 'C', 'D', 'E']
+
+import json
+with open('figures/data.json', 'r') as f:
+    _data = json.load(f)
+_optimal_T_map = {c: _data['cities'][c]['optimal_T'] for c in cities}
 T_range = np.arange(1, 8)
 
 fig, axes = plt.subplots(2, 3, figsize=(12, 8), dpi=300)
@@ -38,7 +43,7 @@ for idx, city in enumerate(cities):
     ax.plot(T_range, total, '^--', color=COLOR_TOTAL, label='Total Cost', linewidth=2.5, markersize=8)
 
     # Optimal marker
-    optimal_T = [1, 1, 2, 3, 6][idx]
+    optimal_T = _optimal_T_map[city]
     opt_total = total[optimal_T - 1]
     ax.axvline(x=optimal_T, color='gray', linestyle='--', alpha=0.6, linewidth=1)
     ax.plot(optimal_T, opt_total, '*', color='green', markersize=14, zorder=5)
