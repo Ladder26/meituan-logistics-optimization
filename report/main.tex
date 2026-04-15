@@ -22,14 +22,14 @@
 \begin{document}
 
 \begin{center}
-    {\Large\bfseries Joint Inventory and Routing Optimization for Multi-City Logistics: A Case Study on Meituan Fresh}\\[0.8em]
-    {\normalsize \textit{Optimization Team, Meituan Logistics}}\\[0.3em]
+    {\Large\bfseries Joint Inventory and Routing Optimization for Multi-City Logistics: A Case Study on Meituan Fresh}\\*[0.8em]
+    {\normalsize \textit{Optimization Team, Meituan Logistics}}\\*[0.3em]
     {\small April 2026}
 \end{center}
 
 \begin{abstract}
 \noindent\textbf{Abstract---}
-The "last-mile" fresh-food delivery network faces a fundamental trade-off between inventory holding costs and transportation costs. In this work, we propose a joint optimization framework for a five-city, 25-station logistics network. For each city, we optimize the replenishment cycle $T$ by balancing storage and routing costs; subsequently, we enumerate all $7^5=16{,}807$ global $T$-combinations to identify the system-wide optimum. The best configuration achieves a total daily cost of \textbf{24,874 CNY}, with city-level optimal cycles ranging from $T^*=1$ to $T^*=6$. Compared with uniform-$T$ baselines, the optimal differentiated strategy saves up to \textbf{20,058 CNY/day} (80.6\%). Our results demonstrate that city-specific replenishment policies are essential for cost-efficient operations in heterogeneous logistics networks.
+The ``last-mile'' fresh-food delivery network faces a fundamental trade-off between inventory holding costs and transportation costs. In this work, we propose a joint optimization framework for a five-city, 25-station logistics network. For each city, we optimize the replenishment cycle $T$ by balancing storage and routing costs; subsequently, we enumerate all $7^5=16{,}807$ global $T$-combinations to identify the system-wide optimum. The best configuration achieves a total daily cost of \textbf{24,874 CNY}, with city-level optimal cycles ranging from $T^*=1$ to $T^*=6$. Compared with uniform-$T$ baselines, the optimal differentiated strategy saves up to \textbf{20,058 CNY/day} (80.6\%). Our results demonstrate that city-specific replenishment policies are essential for cost-efficient operations in heterogeneous logistics networks.
 \end{abstract}
 
 \section{Introduction}
@@ -56,7 +56,7 @@ where the storage cost is proportional to the cycle length and the daily demand 
 \begin{equation}
     C_s(T) = h \cdot \frac{T \cdot d}{2},
 \end{equation}
-with $h$ the unit holding cost. The transport cost contains two parts: the CDC-to-city long-haul cost (a fixed cost per trip divided by $T$) and the city-to-station local routing cost. The local routing problem is solved by a greedy grouping heuristic that clusters stations into feasible vehicle groups and assigns the cheapest eligible vehicle type. The resulting single-trip transport cost is amortized over $T$ days:
+with $h$ the unit holding cost. The transport cost contains two parts: the CDC-to-city long-haul cost (a fixed cost per trip divided by $T$) and the city-to-station local routing cost. The local routing problem is solved by exhaustive grouping: we enumerate all feasible partitions of stations into groups of size at most three, compute the cheapest eligible vehicle mix for each group, and pick the partition with the minimum single-trip cost. The resulting single-trip transport cost is amortized over $T$ days:
 \begin{equation}
     C_t(T) = \frac{1}{T}\Bigl(f_{\text{CDC}} + \sum_{g \in \mathcal{G}} c(g)\Bigr),
 \end{equation}
@@ -73,7 +73,7 @@ Because there are only five cities and $T \in \{1,\dots,7\}$, the full decision 
 \REQUIRE City code $c$
 \FOR{$T = 1$ to $7$}
     \STATE $S \leftarrow$ compute\_storage\_cost$(c, T)$
-    \STATE $G \leftarrow$ greedy\_station\_grouping$(c, T)$
+    \STATE $G \leftarrow$ exhaustive\_station\_grouping$(c, T)$
     \STATE $R \leftarrow$ assign\_vehicles$(G)$
     \STATE $V \leftarrow$ compute\_trip\_cost$(R) / T$
     \STATE $\text{cost}[T] \leftarrow S + V$
@@ -111,7 +111,7 @@ E & 6 & 4 & 2 &   684.0 & 1,001.7 & 1,685.7 \\
 \subsection{Sensitivity Analysis}
 Figure~\ref{fig:sensitivity} plots the storage, transport, and total costs for each city as $T$ varies from 1 to 7 days.
 
-\textbf{City A and B} exhibit monotonically increasing total costs. Because both cities have large daily demand, the storage cost $C_s(T)$ grows almost linearly with $T$ and quickly dominates the modest savings in transport. Consequently, the optimal cycles are boundary solutions at $T^*=1$.
+\textbf{Cities A and B} exhibit monotonically increasing total costs. Because both cities have large daily demand, the storage cost $C_s(T)$ grows almost linearly with $T$ and quickly dominates the modest savings in transport. Consequently, the optimal cycles are boundary solutions at $T^*=1$.
 
 \textbf{City C} shows a weak U-shape with the minimum at $T^*=2$. At $T=1$ the transport cost is still high; extending the cycle to two days yields just enough transport savings to outweigh the additional inventory cost.
 

@@ -1,1 +1,158 @@
-{"cities": {"A": {"optimal_T": 1, "storage_cost": 6075.0, "transport_cost": 3055.0, "total_cost": 9130.0, "station_count": 6, "n_vehicles": 3}, "B": {"optimal_T": 1, "storage_cost": 3000.0, "transport_cost": 3215.0, "total_cost": 6215.0, "station_count": 5, "n_vehicles": 2}, "C": {"optimal_T": 2, "storage_cost": 2400.0, "transport_cost": 2515.0, "total_cost": 4915.0, "station_count": 5, "n_vehicles": 3}, "D": {"optimal_T": 3, "storage_cost": 1250.0, "transport_cost": 1678.3333333333333, "total_cost": 2928.333333333333, "station_count": 5, "n_vehicles": 2}, "E": {"optimal_T": 6, "storage_cost": 684.0, "transport_cost": 1001.6666666666666, "total_cost": 1685.6666666666665, "station_count": 4, "n_vehicles": 2}}}
+{
+  "cities": {
+    "A": {
+      "optimal_T": 1,
+      "storage_cost": 6075.0,
+      "transport_cost": 3055.0,
+      "total_cost": 9130.0,
+      "station_count": 3,
+      "n_vehicles": 3
+    },
+    "B": {
+      "optimal_T": 1,
+      "storage_cost": 3000.0,
+      "transport_cost": 3215.0,
+      "total_cost": 6215.0,
+      "station_count": 2,
+      "n_vehicles": 2
+    },
+    "C": {
+      "optimal_T": 2,
+      "storage_cost": 2400.0,
+      "transport_cost": 2515.0,
+      "total_cost": 4915.0,
+      "station_count": 3,
+      "n_vehicles": 3
+    },
+    "D": {
+      "optimal_T": 3,
+      "storage_cost": 1250.0,
+      "transport_cost": 1678.3333333333333,
+      "total_cost": 2928.333333333333,
+      "station_count": 2,
+      "n_vehicles": 2
+    },
+    "E": {
+      "optimal_T": 6,
+      "storage_cost": 684.0,
+      "transport_cost": 1001.6666666666666,
+      "total_cost": 1685.6666666666665,
+      "station_count": 2,
+      "n_vehicles": 2
+    }
+  },
+  "global_optimal": {
+    "total_cost": 24874.0,
+    "total_storage_cost": 13409.0,
+    "total_transport_cost": 11465.0,
+    "T_combo": {
+      "A": 1,
+      "B": 1,
+      "C": 2,
+      "D": 3,
+      "E": 6
+    }
+  },
+  "top_solutions": [
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 2,
+        "D": 3,
+        "E": 6
+      },
+      "total_cost": 24874.0
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 2,
+        "D": 3,
+        "E": 4
+      },
+      "total_cost": 24903.833333333332
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 3,
+        "E": 6
+      },
+      "total_cost": 24929.0
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 2,
+        "D": 2,
+        "E": 6
+      },
+      "total_cost": 24950.666666666668
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 3,
+        "E": 4
+      },
+      "total_cost": 24958.833333333332
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 2,
+        "D": 2,
+        "E": 4
+      },
+      "total_cost": 24980.5
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 2,
+        "D": 3,
+        "E": 5
+      },
+      "total_cost": 24988.833333333332
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 2,
+        "C": 2,
+        "D": 3,
+        "E": 6
+      },
+      "total_cost": 24989.0
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 2,
+        "E": 6
+      },
+      "total_cost": 25005.666666666668
+    },
+    {
+      "T_combo": {
+        "A": 1,
+        "B": 2,
+        "C": 2,
+        "D": 3,
+        "E": 4
+      },
+      "total_cost": 25018.833333333332
+    }
+  ]
+}
